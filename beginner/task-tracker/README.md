@@ -54,3 +54,5 @@ task-cli list done
 task-cli list todo
 task-cli list in-progress
 ```
+## Demo
+![Task Tracker Demo](demo.gif)
