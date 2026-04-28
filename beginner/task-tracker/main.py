@@ -30,7 +30,7 @@ def main():
 
     # list
     list_p = subparsers.add_parser("list")
-    list_p.add_argument("--status", choices=["todo", "in-progress", "done"])
+    list_p.add_argument("status", nargs="?", default=None, choices=["todo", "in-progress", "done"])
 
     args = parser.parse_args()
     cli = TaskCLI()

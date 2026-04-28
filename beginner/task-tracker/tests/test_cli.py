@@ -94,10 +94,12 @@ def test_list_filters_by_status(cli):
     assert len(done) == 1
     assert done[0].id == 1
 
-def test_list_empty_returns_empty(cli):
-    assert cli.list_tasks() == []
+def test_list_empty_returns_empty(cli, capsys):
+    cli.list_tasks()
+    assert "No tasks found" in capsys.readouterr().out
 
 def test_list_invalid_status_returns_empty(cli):
     cli.add("Task 1")
     tasks = cli.list_tasks(status="invalid")
     assert tasks == []
+

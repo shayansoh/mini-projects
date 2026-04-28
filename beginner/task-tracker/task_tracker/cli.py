@@ -52,6 +52,9 @@ class TaskCLI:
         tasks = self.storage.load()
         if status:
             tasks =  [task for task in tasks if task.status.value == status]
+        if not tasks:
+            print("No tasks found.")
+            return []
         for task in tasks:
             print(f"[{task.id}] {task.description} ({task.status.value})")
         return tasks
