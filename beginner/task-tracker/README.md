@@ -4,9 +4,26 @@ Source: [roadmap.sh/projects/task-tracker](https://roadmap.sh/projects/task-trac
 
 A CLI app to create, update, and track tasks stored in a local JSON file. No external libraries -- just the language's native filesystem module.
 
+## Demo
+
+![Task Tracker Demo](demo.gif)
+
+## Getting Started
+
+Prerequisites: Python 3.10+
+
+```bash
+git clone https://github.com/<your-username>/mini-projects.git
+cd mini-projects/beginner/task-tracker
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python main.py
+```
+
 ## Requirements
 
-The app runs from the command line and accepts user actions as positional arguments. Tasks are persisted to a `tasks.json` file in the current directory, which should be created automatically if it doesn't exist.
+The app accepts user actions as positional CLI arguments. Tasks are persisted to a `tasks.json` file in the current directory, created automatically on first run.
 
 Users must be able to:
 
@@ -16,43 +33,38 @@ Users must be able to:
 
 Constraints:
 
-- Positional arguments only for CLI inputs
 - No external libraries or frameworks
-- Use the language's native filesystem module for all file operations
+- Native filesystem module only for file operations
 - Handle errors and edge cases gracefully
 
 ## Task Schema
-
-Each task stored in the JSON file should have the following properties:
 
 | Property | Type | Description |
 |----------|------|-------------|
 | `id` | number | Unique identifier |
 | `description` | string | Short description of the task |
 | `status` | string | `todo`, `in-progress`, or `done` |
-| `createdAt` | datetime | Timestamp when the task was created |
-| `updatedAt` | datetime | Timestamp when the task was last updated |
+| `created_at` | datetime | Timestamp when the task was created |
+| `updated_at` | datetime | Timestamp when the task was last updated |
 
 ## Commands
 
 ```bash
 # Add a task
-task-cli add "Buy groceries"
+python main.py add "Buy groceries"
 # Output: Task added successfully (ID: 1)
 
 # Update and delete
-task-cli update 1 "Buy groceries and cook dinner"
-task-cli delete 1
+python main.py update 1 "Buy groceries and cook dinner"
+python main.py delete 1
 
 # Change status
-task-cli mark-in-progress 1
-task-cli mark-done 1
+python main.py mark-in-progress 1
+python main.py mark-done 1
 
 # List tasks
-task-cli list
-task-cli list done
-task-cli list todo
-task-cli list in-progress
+python main.py list
+python main.py list todo
+python main.py list in-progress
+python main.py list done
 ```
-## Demo
-![Task Tracker Demo](demo.gif)
