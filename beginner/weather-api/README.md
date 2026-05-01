@@ -6,7 +6,11 @@ A REST API that wraps the OpenWeatherMap API, adds in-memory caching via Redis, 
 
 ## Demo
 
-TBD
+### API
+![Swagger UI](swagger.png)
+
+### Cache in action
+![Demo](demo.gif)
 
 ## Getting Started
 
