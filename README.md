@@ -1,4 +1,4 @@
-# mini-projects
+# Mini Projects
 
 Side projects built for fun and deliberate practice. Most are sourced from [roadmap.sh/backend/projects](https://roadmap.sh/backend/projects), covering backend fundamentals across CLI tools, REST APIs, databases, and systems design.
 
@@ -11,3 +11,4 @@ Feel free to fork and build your own versions.
 | Project | roadmap.sh | Solution |
 |---------|-----------|--------|
 | Task Tracker | [https://roadmap.sh/projects/task-tracker](https://roadmap.sh/projects/task-tracker) | [beginner/task-tracker](beginner/task-tracker) |
+| Weather API Wrapper | [https://roadmap.sh/projects/weather-api-wrapper-service](https://roadmap.sh/projects/weather-api-wrapper-service) | [beginner/weather-api](https://github.com/shayansoh/mini-projects/tree/main/beginner/weather-api) |
