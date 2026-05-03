@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>URL Shortener</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f4ef;
+      --surface: #ffffff;
+      --border: #e4dfd6;
+      --border-focus: #c4a882;
+      --accent: #c4763a;
+      --accent-hover: #b06530;
+      --accent-light: #fdf0e6;
+      --text: #1e1a15;
+      --text-secondary: #7a6e62;
+      --text-muted: #b0a89e;
+      --success-bg: #f0faf4;
+      --success-border: #a8d9bb;
+      --success-text: #2d7a50;
+      --error: #c0392b;
+      --error-bg: #fdf2f0;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 56px 20px 80px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 580px;
+    }
+
+    header {
+      margin-bottom: 40px;
+      animation: slideUp 0.5s ease both;
+    }
+
+    .logo {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2.4rem;
+      color: var(--text);
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+
+    .logo em {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .tagline {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    /* cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      animation: slideUp 0.5s ease both;
+    }
+
+    .card:nth-child(2) { animation-delay: 0.07s; }
+    .card:nth-child(3) { animation-delay: 0.14s; }
+    .card:nth-child(4) { animation-delay: 0.21s; }
+
+    .card-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    /* input group */
+    .input-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.88rem;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(196,168,130,0.15);
+    }
+
+    input[type="text"]::placeholder { color: var(--text-muted); }
+
+    /* buttons */
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 11px 22px;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.1s, box-shadow 0.18s;
+      white-space: nowrap;
+      box-shadow: 0 1px 3px rgba(196,118,58,0.25);
+    }
+
+    .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 3px 10px rgba(196,118,58,0.3); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 7px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--border-focus);
+      color: var(--text);
+      background: var(--accent-light);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--error);
+      border: 1.5px solid #f2ccc8;
+      border-radius: var(--radius-sm);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 7px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-danger:hover { background: var(--error-bg); border-color: #e8a9a3; }
+
+    .btn-warning {
+      background: transparent;
+      color: #92600a;
+      border: 1.5px solid #f0d9a8;
+      border-radius: var(--radius-sm);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 7px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-warning:hover { background: #fdf5e6; border-color: #e0c080; }
+
+    /* result block — shorten */
+    .result-block {
+      display: none;
+      margin-top: 20px;
+      padding: 18px;
+      background: var(--accent-light);
+      border: 1.5px solid #e8c9a8;
+      border-radius: var(--radius-sm);
+      animation: fadeIn 0.25s ease;
+    }
+
+    .result-block.visible { display: block; }
+
+    .result-code {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.9rem;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+    }
+
+    .result-url {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 5px;
+      word-break: break-all;
+      line-height: 1.5;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* stats inline */
+    .stats-inline {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e8c9a8;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .stats-inline.visible { display: block; }
+
+    .stat-number {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2.4rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-sublabel {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      margin-top: 3px;
+      font-weight: 500;
+    }
+
+    .stat-rows {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+    }
+
+    .stat-row .label { color: var(--text-muted); }
+    .stat-row .value { color: var(--text-secondary); font-weight: 500; }
+
+    /* manage card tabs */
+    .tab-row {
+      display: flex;
+      gap: 0;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      flex: 1;
+      background: var(--bg);
+      border: none;
+      border-right: 1px solid var(--border);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 9px 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .tab:last-child { border-right: none; }
+
+    .tab:hover { background: var(--accent-light); color: var(--text-secondary); }
+
+    .tab.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .tab-panel { display: none; animation: fadeIn 0.2s ease; }
+    .tab-panel.active { display: block; }
+
+    /* response boxes */
+    .response-box {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      animation: fadeIn 0.2s ease;
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+
+    .response-box.visible { display: block; }
+
+    .response-box.success {
+      background: var(--success-bg);
+      border: 1.5px solid var(--success-border);
+    }
+
+    .response-box.warning {
+      background: #fdf5e6;
+      border: 1.5px solid #f0d9a8;
+    }
+
+    .response-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 3px 0;
+    }
+
+    .response-row .rlabel { color: var(--text-muted); font-weight: 500; white-space: nowrap; }
+    .response-row .rvalue { color: var(--text); text-align: right; word-break: break-all; }
+    .response-row .rvalue.highlight { color: var(--success-text); font-weight: 600; font-size: 0.9rem; }
+    .response-row .rvalue.accent { color: var(--accent); font-family: 'Instrument Serif', serif; font-size: 1.1rem; }
+
+    /* confirm delete */
+    .confirm-box {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--error-bg);
+      border: 1.5px solid #f2ccc8;
+      border-radius: var(--radius-sm);
+      animation: fadeIn 0.2s ease;
+    }
+
+    .confirm-box.visible { display: block; }
+
+    .confirm-text {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .confirm-text strong { color: var(--error); }
+
+    .confirm-actions { display: flex; gap: 8px; }
+
+    /* lookup result */
+    .lookup-result {
+      display: none;
+      margin-top: 20px;
+      padding: 18px;
+      background: var(--success-bg);
+      border: 1.5px solid var(--success-border);
+      border-radius: var(--radius-sm);
+      animation: fadeIn 0.25s ease;
+    }
+
+    .lookup-result.visible { display: block; }
+
+    .lookup-rows { display: flex; flex-direction: column; gap: 8px; }
+
+    .lookup-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      font-size: 0.8rem;
+    }
+
+    .lookup-row .label { color: var(--text-muted); white-space: nowrap; font-weight: 500; padding-top: 1px; }
+    .lookup-row .value { color: var(--text); text-align: right; word-break: break-all; line-height: 1.5; }
+    .lookup-row .value.highlight { color: var(--success-text); font-weight: 600; font-size: 0.9rem; }
+
+    /* error */
+    .error-msg {
+      display: none;
+      font-size: 0.78rem;
+      color: var(--error);
+      background: var(--error-bg);
+      border: 1px solid #f2ccc8;
+      border-radius: var(--radius-sm);
+      padding: 9px 13px;
+      margin-top: 12px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .error-msg.visible { display: block; }
+
+    /* section divider inside card */
+    .inner-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 20px 0;
+    }
+
+    /* toast */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: var(--text);
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 999px;
+      opacity: 0;
+      transition: all 0.22s ease;
+      pointer-events: none;
+      z-index: 100;
+      white-space: nowrap;
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    footer {
+      margin-top: 40px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+      animation: slideUp 0.5s ease 0.25s both;
+    }
+
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+
+    footer a:hover { color: var(--accent); }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="logo">URL <em>Shortener</em></div>
+    <div class="tagline">Powered by FastAPI + PostgreSQL</div>
+  </header>
+
+  <!-- CARD 1: SHORTEN -->
+  <div class="card">
+    <div class="card-label">Shorten a URL</div>
+    <div class="input-group">
+      <input type="text" id="urlInput" placeholder="https://your-long-url.com/paste/here" />
+      <button class="btn-primary" onclick="shortenURL()">Shorten</button>
+    </div>
+    <div class="error-msg" id="shortenError"></div>
+
+    <div class="result-block" id="shortenResult">
+      <div class="result-code" id="resultCode"></div>
+      <div class="result-url" id="resultOriginal"></div>
+      <div class="result-actions">
+        <button class="btn-secondary" onclick="copyCode()">Copy code</button>
+        <button class="btn-secondary" onclick="loadStats()">View stats</button>
+        <button class="btn-danger" onclick="deleteShortenedURL()">Delete</button>
+      </div>
+
+      <div class="stats-inline" id="inlineStats">
+        <hr style="margin-bottom:16px; border:none; border-top:1px solid #e8c9a8;"/>
+        <div class="stat-number" id="statCount">0</div>
+        <div class="stat-sublabel">total accesses</div>
+        <div class="stat-rows">
+          <div class="stat-row">
+            <span class="label">Created</span>
+            <span class="value" id="statCreated"></span>
+          </div>
+          <div class="stat-row">
+            <span class="label">Last updated</span>
+            <span class="value" id="statUpdated"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 2: MANAGE -->
+  <div class="card">
+    <div class="card-label">Manage a short code</div>
+
+    <div class="input-group" style="margin-bottom: 20px;">
+      <input type="text" id="manageCodeInput" placeholder="Enter short code, e.g. aB3xYz" />
+    </div>
+
+    <!-- tabs -->
+    <div class="tab-row">
+      <button class="tab active" onclick="switchTab('retrieve')">Retrieve</button>
+      <button class="tab" onclick="switchTab('stats')">Stats</button>
+      <button class="tab" onclick="switchTab('update')">Update</button>
+      <button class="tab" onclick="switchTab('delete')">Delete</button>
+    </div>
+
+    <!-- retrieve panel -->
+    <div class="tab-panel active" id="panel-retrieve">
+      <button class="btn-primary" style="width:100%;" onclick="retrieveURL()">Retrieve original URL</button>
+      <div class="error-msg" id="retrieveError"></div>
+      <div class="response-box success" id="retrieveResult">
+        <div class="response-row">
+          <span class="rlabel">Short code</span>
+          <span class="rvalue accent" id="retrieveCode"></span>
+        </div>
+        <div class="response-row">
+          <span class="rlabel">Original URL</span>
+          <span class="rvalue" id="retrieveOriginal"></span>
+        </div>
+        <div class="response-row">
+          <span class="rlabel">Created</span>
+          <span class="rvalue" id="retrieveCreated"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- stats panel -->
+    <div class="tab-panel" id="panel-stats">
+      <button class="btn-primary" style="width:100%;" onclick="fetchStats()">Fetch stats</button>
+      <div class="error-msg" id="statsError"></div>
+      <div class="response-box success" id="statsResult">
+        <div class="response-row">
+          <span class="rlabel">Short code</span>
+          <span class="rvalue accent" id="statsCode"></span>
+        </div>
+        <div class="response-row">
+          <span class="rlabel">Original URL</span>
+          <span class="rvalue" id="statsOriginal"></span>
+        </div>
+        <div class="response-row">
+          <span class="rlabel">Access count</span>
+          <span class="rvalue highlight" id="statsCount"></span>
+        </div>
+        <div class="response-row">
+          <span class="rlabel">Created</span>
+          <span class="rvalue" id="statsCreatedAt"></span>
+        </div>
+        <div class="response-row">
+          <span class="rlabel">Last updated</span>
+          <span class="rvalue" id="statsUpdatedAt"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- update panel -->
+    <div class="tab-panel" id="panel-update">
+      <input type="text" id="updateNewURL" placeholder="New destination URL" style="width:100%; margin-bottom:10px;" />
+      <button class="btn-primary" style="width:100%;" onclick="updateURL()">Update URL</button>
+      <div class="error-msg" id="updateError"></div>
+      <div class="response-box warning" id="updateResult">
+        <div class="response-row">
+          <span class="rlabel">Short code</span>
+          <span class="rvalue accent" id="updateCode"></span>
+        </div>
+        <div class="response-row">
+          <span class="rlabel">New URL</span>
+          <span class="rvalue" id="updateOriginal"></span>
+        </div>
+        <div class="response-row">
+          <span class="rlabel">Updated at</span>
+          <span class="rvalue" id="updateUpdatedAt"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- delete panel -->
+    <div class="tab-panel" id="panel-delete">
+      <button class="btn-danger" style="width:100%; padding:11px;" onclick="showDeleteConfirm()">Delete short URL</button>
+      <div class="error-msg" id="deleteError"></div>
+      <div class="confirm-box" id="deleteConfirm">
+        <div class="confirm-text">
+          Are you sure you want to delete <strong id="deleteCodeLabel"></strong>? This cannot be undone.
+        </div>
+        <div class="confirm-actions">
+          <button class="btn-danger" onclick="confirmDelete()">Yes, delete it</button>
+          <button class="btn-secondary" onclick="cancelDelete()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CARD 3: LOOKUP -->
+  <div class="card">
+    <div class="card-label">Look up a short code</div>
+    <div class="input-group">
+      <input type="text" id="lookupInput" placeholder="e.g. aB3xYz" />
+      <button class="btn-primary" onclick="lookupURL()">Look up</button>
+    </div>
+    <div class="error-msg" id="lookupError"></div>
+
+    <div class="lookup-result" id="lookupResult">
+      <div class="lookup-rows">
+        <div class="lookup-row">
+          <span class="label">Short code</span>
+          <span class="value highlight" id="lookupCode"></span>
+        </div>
+        <div class="lookup-row">
+          <span class="label">Original URL</span>
+          <span class="value" id="lookupOriginal"></span>
+        </div>
+        <div class="lookup-row">
+          <span class="label">Accesses</span>
+          <span class="value highlight" id="lookupCount"></span>
+        </div>
+        <div class="lookup-row">
+          <span class="label">Created</span>
+          <span class="value" id="lookupCreated"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  built by <a href="https://github.com/shayansoh" target="_blank">shayansoh</a>
+  &nbsp;·&nbsp;
+  <a href="http://localhost:8000/docs" target="_blank">api docs</a>
+</footer>
+
+<script>
+  const API = 'http://localhost:8000';
+  let currentShortenCode = null;
+  let activeTab = 'retrieve';
+
+  /* ── helpers ── */
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.add('visible');
+  }
+
+  function clearError(id) {
+    const el = document.getElementById(id);
+    el.textContent = '';
+    el.classList.remove('visible');
+  }
+
+  function showResponse(id) {
+    document.getElementById(id).classList.add('visible');
+  }
+
+  function hideResponse(id) {
+    document.getElementById(id).classList.remove('visible');
+  }
+
+  function formatDate(iso) {
+    return new Date(iso).toLocaleString('en-CA', {
+      month: 'short', day: 'numeric', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  function getManageCode() {
+    return document.getElementById('manageCodeInput').value.trim();
+  }
+
+  /* ── tabs ── */
+  function switchTab(name) {
+    activeTab = name;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById(`panel-${name}`).classList.add('active');
+
+    // clear errors and results when switching
+    ['retrieveError','statsError','updateError','deleteError'].forEach(clearError);
+    ['retrieveResult','statsResult','updateResult'].forEach(hideResponse);
+    hideResponse('deleteConfirm');
+    document.getElementById('deleteConfirm').classList.remove('visible');
+  }
+
+  /* ── card 1: shorten ── */
+  async function shortenURL() {
+    clearError('shortenError');
+    const url = document.getElementById('urlInput').value.trim();
+    if (!url) return showError('shortenError', 'Please enter a URL.');
+
+    try {
+      const res = await fetch(`${API}/shorten`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        const detail = Array.isArray(err.detail) ? err.detail.map(e => e.msg).join(', ') : err.detail || 'Something went wrong.';
+        return showError('shortenError', detail);
+      }
+
+      const data = await res.json();
+      currentShortenCode = data.short_code;
+      document.getElementById('resultCode').textContent = data.short_code;
+      document.getElementById('resultOriginal').textContent = data.url;
+      document.getElementById('shortenResult').classList.add('visible');
+      document.getElementById('inlineStats').classList.remove('visible');
+      showToast('URL shortened successfully');
+    } catch {
+      showError('shortenError', 'Could not reach the API — is it running?');
+    }
+  }
+
+  async function loadStats() {
+    if (!currentShortenCode) return;
+    try {
+      const res = await fetch(`${API}/shorten/${currentShortenCode}/stats`);
+      if (!res.ok) return;
+      const data = await res.json();
+      document.getElementById('statCount').textContent = data.access_count;
+      document.getElementById('statCreated').textContent = formatDate(data.created_at);
+      document.getElementById('statUpdated').textContent = formatDate(data.updated_at);
+      document.getElementById('inlineStats').classList.add('visible');
+    } catch {
+      showToast('Could not load stats.');
+    }
+  }
+
+  async function deleteShortenedURL() {
+    if (!currentShortenCode) return;
+    try {
+      const res = await fetch(`${API}/shorten/${currentShortenCode}`, { method: 'DELETE' });
+      if (res.status === 204) {
+        document.getElementById('shortenResult').classList.remove('visible');
+        document.getElementById('urlInput').value = '';
+        currentShortenCode = null;
+        showToast('Short URL deleted.');
+      }
+    } catch {
+      showToast('Delete failed.');
+    }
+  }
+
+  function copyCode() {
+    if (!currentShortenCode) return;
+    navigator.clipboard.writeText(currentShortenCode);
+    showToast('Short code copied to clipboard.');
+  }
+
+  /* ── card 2: manage ── */
+
+  // retrieve
+  async function retrieveURL() {
+    clearError('retrieveError');
+    hideResponse('retrieveResult');
+    const code = getManageCode();
+    if (!code) return showError('retrieveError', 'Please enter a short code.');
+
+    try {
+      const res = await fetch(`${API}/shorten/${code}`);
+      if (res.status === 404) return showError('retrieveError', `No URL found for code "${code}".`);
+      if (!res.ok) return showError('retrieveError', 'Something went wrong.');
+
+      const data = await res.json();
+      document.getElementById('retrieveCode').textContent = data.short_code;
+      document.getElementById('retrieveOriginal').textContent = data.url;
+      document.getElementById('retrieveCreated').textContent = formatDate(data.created_at);
+      showResponse('retrieveResult');
+    } catch {
+      showError('retrieveError', 'Could not reach the API — is it running?');
+    }
+  }
+
+  // stats
+  async function fetchStats() {
+    clearError('statsError');
+    hideResponse('statsResult');
+    const code = getManageCode();
+    if (!code) return showError('statsError', 'Please enter a short code.');
+
+    try {
+      const res = await fetch(`${API}/shorten/${code}/stats`);
+      if (res.status === 404) return showError('statsError', `No URL found for code "${code}".`);
+      if (!res.ok) return showError('statsError', 'Something went wrong.');
+
+      const data = await res.json();
+      document.getElementById('statsCode').textContent = data.short_code;
+      document.getElementById('statsOriginal').textContent = data.url;
+      document.getElementById('statsCount').textContent = data.access_count;
+      document.getElementById('statsCreatedAt').textContent = formatDate(data.created_at);
+      document.getElementById('statsUpdatedAt').textContent = formatDate(data.updated_at);
+      showResponse('statsResult');
+    } catch {
+      showError('statsError', 'Could not reach the API — is it running?');
+    }
+  }
+
+  // update
+  async function updateURL() {
+    clearError('updateError');
+    hideResponse('updateResult');
+    const code = getManageCode();
+    const newURL = document.getElementById('updateNewURL').value.trim();
+    if (!code) return showError('updateError', 'Please enter a short code.');
+    if (!newURL) return showError('updateError', 'Please enter a new destination URL.');
+
+    try {
+      const res = await fetch(`${API}/shorten/${code}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: newURL })
+      });
+
+      if (res.status === 404) return showError('updateError', `No URL found for code "${code}".`);
+      if (res.status === 400) {
+        const err = await res.json();
+        const detail = Array.isArray(err.detail) ? err.detail.map(e => e.msg).join(', ') : err.detail || 'Invalid URL.';
+        return showError('updateError', detail);
+      }
+      if (!res.ok) return showError('updateError', 'Something went wrong.');
+
+      const data = await res.json();
+      document.getElementById('updateCode').textContent = data.short_code;
+      document.getElementById('updateOriginal').textContent = data.url;
+      document.getElementById('updateUpdatedAt').textContent = formatDate(data.updated_at);
+      showResponse('updateResult');
+      showToast('URL updated successfully.');
+    } catch {
+      showError('updateError', 'Could not reach the API — is it running?');
+    }
+  }
+
+  // delete
+  function showDeleteConfirm() {
+    clearError('deleteError');
+    const code = getManageCode();
+    if (!code) return showError('deleteError', 'Please enter a short code.');
+    document.getElementById('deleteCodeLabel').textContent = code;
+    document.getElementById('deleteConfirm').classList.add('visible');
+  }
+
+  function cancelDelete() {
+    document.getElementById('deleteConfirm').classList.remove('visible');
+  }
+
+  async function confirmDelete() {
+    const code = getManageCode();
+    try {
+      const res = await fetch(`${API}/shorten/${code}`, { method: 'DELETE' });
+      if (res.status === 204) {
+        document.getElementById('deleteConfirm').classList.remove('visible');
+        document.getElementById('manageCodeInput').value = '';
+        showToast(`"${code}" deleted.`);
+      } else if (res.status === 404) {
+        document.getElementById('deleteConfirm').classList.remove('visible');
+        showError('deleteError', `No URL found for code "${code}".`);
+      } else {
+        showError('deleteError', 'Something went wrong.');
+      }
+    } catch {
+      showError('deleteError', 'Could not reach the API — is it running?');
+    }
+  }
+
+  /* ── card 3: lookup ── */
+  async function lookupURL() {
+    clearError('lookupError');
+    document.getElementById('lookupResult').classList.remove('visible');
+    const code = document.getElementById('lookupInput').value.trim();
+    if (!code) return showError('lookupError', 'Please enter a short code.');
+
+    try {
+      const res = await fetch(`${API}/shorten/${code}/stats`);
+      if (res.status === 404) return showError('lookupError', `No URL found for code "${code}".`);
+      if (!res.ok) return showError('lookupError', 'Something went wrong.');
+
+      const data = await res.json();
+      document.getElementById('lookupCode').textContent = data.short_code;
+      document.getElementById('lookupOriginal').textContent = data.url;
+      document.getElementById('lookupCount').textContent = data.access_count;
+      document.getElementById('lookupCreated').textContent = formatDate(data.created_at);
+      document.getElementById('lookupResult').classList.add('visible');
+    } catch {
+      showError('lookupError', 'Could not reach the API — is it running?');
+    }
+  }
+
+  /* ── enter key support ── */
+  document.getElementById('urlInput').addEventListener('keydown', e => { if (e.key === 'Enter') shortenURL(); });
+  document.getElementById('lookupInput').addEventListener('keydown', e => { if (e.key === 'Enter') lookupURL(); });
+  document.getElementById('updateNewURL').addEventListener('keydown', e => { if (e.key === 'Enter') updateURL(); });
+  document.getElementById('manageCodeInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      if (activeTab === 'retrieve') retrieveURL();
+      else if (activeTab === 'stats') fetchStats();
+      else if (activeTab === 'update') updateURL();
+      else if (activeTab === 'delete') showDeleteConfirm();
+    }
+  });
+</script>
+</body>
+</html>
