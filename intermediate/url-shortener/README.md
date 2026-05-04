@@ -8,8 +8,7 @@ A RESTful URL shortening service built with **FastAPI** and **PostgreSQL**. Supp
 
 ## Demo
 
-[Watch demo](./demo.mp4)
-
+![Demo](./demo.gif)
 ---
 
 ## Features
