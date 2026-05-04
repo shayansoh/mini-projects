@@ -11,4 +11,5 @@ Feel free to fork and build your own versions.
 | Project | roadmap.sh | Solution |
 |---------|-----------|--------|
 | Task Tracker | [https://roadmap.sh/projects/task-tracker](https://roadmap.sh/projects/task-tracker) | [beginner/task-tracker](beginner/task-tracker) |
-| Weather API Wrapper | [https://roadmap.sh/projects/weather-api-wrapper-service](https://roadmap.sh/projects/weather-api-wrapper-service) | [beginner/weather-api](https://github.com/shayansoh/mini-projects/tree/main/beginner/weather-api) |
+| Weather API Wrapper | [https://roadmap.sh/projects/weather-api-wrapper-service](https://roadmap.sh/projects/weather-api-wrapper-service) | [beginner/weather-api](beginner/weather-api) |
+| URL Shortener | [https://roadmap.sh/projects/url-shortening-service](https://roadmap.sh/projects/url-shortening-service) | [intermediate/url-shortener](intermediate/url-shortener)
